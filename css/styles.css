@@ -105,6 +105,12 @@ input[type="date"] {
 
 .btn:hover { filter: brightness(1.08); }
 
+.presets {
+  display: flex;
+  gap: 8px;
+  align-items: end;
+}
+
 .status {
   color: var(--muted);
   font-size: 0.9rem;

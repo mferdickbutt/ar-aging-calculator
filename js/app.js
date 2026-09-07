@@ -7,6 +7,8 @@
 
   var els = {
     asOf: document.getElementById("asOf"),
+    asOfSample: document.getElementById("asOfSample"),
+    asOfToday: document.getElementById("asOfToday"),
     file: document.getElementById("csvFile"),
     loadSample: document.getElementById("loadSample"),
     status: document.getElementById("status"),
@@ -37,9 +39,17 @@
     return "over";
   }
 
+  function setAsOf(iso) {
+    els.asOf.value = iso;
+    render();
+  }
+
   function render() {
     showError("");
-    var asOf = els.asOf.value || SAMPLE_AS_OF;
+    var asOf = els.asOf.value;
+    if (!asOf || ARAging.parseISODate(asOf) == null) {
+      return;
+    }
     var report;
     try {
       report = ARAging.ageInvoices(invoices, asOf);
@@ -175,6 +185,13 @@
   }
 
   els.asOf.addEventListener("change", render);
+  els.asOf.addEventListener("input", render);
+  els.asOfSample.addEventListener("click", function () {
+    setAsOf(SAMPLE_AS_OF);
+  });
+  els.asOfToday.addEventListener("click", function () {
+    setAsOf(todayISO());
+  });
   els.loadSample.addEventListener("click", function () {
     loadSample();
   });
