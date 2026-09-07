@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AR aging calculator</title>
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <h1>Accounts receivable aging</h1>
+        <p class="lede">
+          Open invoice balances are aged by <strong>calendar days past due date</strong>
+          (as-of minus due date). If due date is blank, invoice date is used.
+          <strong>Current</strong> is not yet due or due today (0 days).
+          <strong>90+</strong> is 91 or more days past due so it does not overlap 61–90.
+        </p>
+      </header>
+
+      <div class="controls">
+        <label>
+          As-of date
+          <input id="asOf" type="date" />
+        </label>
+        <label>
+          Load CSV
+          <input id="csvFile" type="file" accept=".csv,text/csv" />
+        </label>
+        <button type="button" class="btn secondary" id="loadSample">Reload sample</button>
+        <p class="status" id="status">Loading sample…</p>
+      </div>
+
+      <p class="error" id="error" hidden></p>
+      <div class="kpis" id="kpis"></div>
+
+      <section class="panel">
+        <h2>Aging by customer</h2>
+        <table>
+          <thead>
+            <tr>
+              <th class="left">Customer</th>
+              <th>Invoices</th>
+              <th>Current</th>
+              <th>1–30</th>
+              <th>31–60</th>
+              <th>61–90</th>
+              <th>90+</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody id="customerBody"></tbody>
+        </table>
+      </section>
+
+      <section class="panel">
+        <h2>Open invoices</h2>
+        <table>
+          <thead>
+            <tr>
+              <th class="left">Invoice</th>
+              <th class="left">Customer</th>
+              <th>Invoice date</th>
+              <th>Due date</th>
+              <th>Days past due</th>
+              <th class="left">Bucket</th>
+              <th>Outstanding</th>
+            </tr>
+          </thead>
+          <tbody id="invoiceBody"></tbody>
+        </table>
+      </section>
+
+      <p class="note">
+        CSV columns: <code>id</code>, <code>customer</code>, <code>invoice_date</code>,
+        <code>due_date</code>, <code>amount</code>, <code>paid</code> (aliases accepted).
+        Outstanding = amount − paid. Fully paid rows are omitted. Sample data is fictional.
+      </p>
+      <footer>
+        Static demo · same aging math as <code>js/aging.js</code> and <code>./scripts/test.sh</code>
+      </footer>
+    </div>
+    <script src="js/aging.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>

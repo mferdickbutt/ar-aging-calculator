@@ -1,0 +1,114 @@
+[
+  {
+    "id": "INV-1001",
+    "customer": "Acme Corp",
+    "invoice_date": "2026-08-16",
+    "due_date": "2026-09-15",
+    "amount": 5000,
+    "paid": 0
+  },
+  {
+    "id": "INV-1002",
+    "customer": "Globex LLC",
+    "invoice_date": "2026-08-08",
+    "due_date": "2026-09-07",
+    "amount": 3250,
+    "paid": 0
+  },
+  {
+    "id": "INV-1003",
+    "customer": "Acme Corp",
+    "invoice_date": "2026-07-21",
+    "due_date": "2026-08-20",
+    "amount": 8400,
+    "paid": 0
+  },
+  {
+    "id": "INV-1004",
+    "customer": "Initech",
+    "invoice_date": "2026-07-09",
+    "due_date": "2026-08-08",
+    "amount": 2100,
+    "paid": 0
+  },
+  {
+    "id": "INV-1005",
+    "customer": "Initech",
+    "invoice_date": "2026-07-08",
+    "due_date": "2026-08-07",
+    "amount": 4500,
+    "paid": 0
+  },
+  {
+    "id": "INV-1006",
+    "customer": "Umbrella Co",
+    "invoice_date": "2026-06-09",
+    "due_date": "2026-07-09",
+    "amount": 6750,
+    "paid": 0
+  },
+  {
+    "id": "INV-1007",
+    "customer": "Umbrella Co",
+    "invoice_date": "2026-06-08",
+    "due_date": "2026-07-08",
+    "amount": 1200,
+    "paid": 0
+  },
+  {
+    "id": "INV-1008",
+    "customer": "Soylent Inc",
+    "invoice_date": "2026-05-10",
+    "due_date": "2026-06-09",
+    "amount": 9999.99,
+    "paid": 0
+  },
+  {
+    "id": "INV-1009",
+    "customer": "Soylent Inc",
+    "invoice_date": "2026-05-09",
+    "due_date": "2026-06-08",
+    "amount": 15000,
+    "paid": 0
+  },
+  {
+    "id": "INV-1010",
+    "customer": "Acme Corp",
+    "invoice_date": "2026-02-01",
+    "due_date": "2026-03-01",
+    "amount": 25000,
+    "paid": 3000
+  },
+  {
+    "id": "INV-1011",
+    "customer": "Globex LLC",
+    "invoice_date": "2026-08-01",
+    "due_date": "2026-08-31",
+    "amount": 10000,
+    "paid": 4000
+  },
+  {
+    "id": "INV-1012",
+    "customer": "Hooli",
+    "invoice_date": "2026-07-20",
+    "due_date": "",
+    "amount": 1800,
+    "paid": 0
+  },
+  {
+    "id": "INV-1013",
+    "customer": "Initech",
+    "invoice_date": "2026-04-01",
+    "due_date": "2026-05-01",
+    "amount": 7500,
+    "paid": 7500
+  },
+  {
+    "id": "INV-1014",
+    "customer": "Hooli",
+    "invoice_date": "2026-09-01",
+    "due_date": "2026-10-01",
+    "amount": 4100.5,
+    "paid": 100.5
+  }
+]

@@ -1,0 +1,8 @@
+{
+  "name": "ar-aging-calculator",
+  "private": true,
+  "description": "Public AR aging calculator (static demo + Node tests)",
+  "scripts": {
+    "test": "node test/aging.test.js"
+  }
+}
