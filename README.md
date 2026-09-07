@@ -18,8 +18,8 @@ Open [the GitHub Pages demo](https://mferdickbutt.github.io/ar-aging-calculator/
 
 ## GitHub Pages
 
-A workflow on `main` deploys this static demo (Actions tries to enable Pages on first run). Live URL: https://mferdickbutt.github.io/ar-aging-calculator/
+Static files live at the repo root. Enable the live demo (one time, needs repo Settings access): **Settings → Pages → Deploy from a branch → `main` / `/ (root)`**. URL: https://mferdickbutt.github.io/ar-aging-calculator/
 
-If that 404s, enable Pages in **Settings → Pages**: Source **GitHub Actions**, or **Deploy from a branch** → `main` / root.
+Until Pages is switched on, use this README and open `index.html` locally.
 
 **Next improvement:** add a customer-level collection-risk flag when 90+ is more than 25% of that customer’s AR.
