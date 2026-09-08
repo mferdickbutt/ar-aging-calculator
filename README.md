@@ -4,6 +4,8 @@ Public accounts-receivable aging: open invoice balances into **current / 1–30 
 
 **Aging rule:** calendar days past **due date** (`as_of − due_date`). If `due_date` is blank, **invoice date** is used. Current includes not-yet-due and due today (0 days). **90+** is 91+ days so it does not overlap 61–90. Outstanding = `amount − paid`; fully paid invoices are omitted.
 
+**Priority score** (higher = more urgent): `max(0, days past due) + round(outstanding ÷ $100) + 50 if 90+ bucket`. Not-yet-due invoices contribute 0 from days. Same inputs always yield the same integer.
+
 ## Run (demo)
 
 Open [the GitHub Pages demo](https://mferdickbutt.github.io/ar-aging-calculator/) or open `index.html` in a browser (or `python3 -m http.server 8080` from this directory). Load the in-repo sample, change the as-of date, or upload a CSV (`id,customer,invoice_date,due_date,amount,paid`).

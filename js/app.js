@@ -152,6 +152,9 @@
           "<td>" +
           ARAging.formatUsd(inv.outstanding) +
           "</td>" +
+          '<td class="priority">' +
+          inv.priority_score +
+          "</td>" +
           "</tr>"
         );
       })

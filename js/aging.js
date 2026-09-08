@@ -109,6 +109,17 @@
     return "90+";
   }
 
+  /**
+   * Collection priority: higher = more urgent (integer, deterministic).
+   * score = max(0, daysPastDue) + round(outstanding / $100) + 50 if 90+ bucket.
+   */
+  function collectionPriorityScore(daysPastDue, outstandingCents, bucket) {
+    var overdueDays = daysPastDue > 0 ? daysPastDue : 0;
+    var amountPoints = Math.round(outstandingCents / 10000);
+    var over90Bonus = bucket === "90+" ? 50 : 0;
+    return overdueDays + amountPoints + over90Bonus;
+  }
+
   function emptyBucketMap() {
     var map = {};
     var i;
@@ -165,6 +176,7 @@
       outstanding_cents: inv.outstanding_cents,
       days_past_due: days,
       bucket: bucket,
+      priority_score: collectionPriorityScore(days, inv.outstanding_cents, bucket),
     };
   }
 
@@ -369,6 +381,7 @@
     fromCents: fromCents,
     roundMoney: roundMoney,
     bucketForDays: bucketForDays,
+    collectionPriorityScore: collectionPriorityScore,
     ageInvoice: ageInvoice,
     ageInvoices: ageInvoices,
     parseCsv: parseCsv,
