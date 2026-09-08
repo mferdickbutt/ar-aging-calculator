@@ -11,6 +11,8 @@
     asOfToday: document.getElementById("asOfToday"),
     file: document.getElementById("csvFile"),
     loadSample: document.getElementById("loadSample"),
+    exportCsv: document.getElementById("exportCsv"),
+    exportCsvTable: document.getElementById("exportCsvTable"),
     status: document.getElementById("status"),
     error: document.getElementById("error"),
     kpis: document.getElementById("kpis"),
@@ -198,6 +200,38 @@
   els.loadSample.addEventListener("click", function () {
     loadSample();
   });
+
+  function exportOpenInvoicesCsv() {
+    showError("");
+    var asOf = els.asOf.value;
+    if (!asOf || ARAging.parseISODate(asOf) == null) {
+      showError("Choose a valid as-of date before exporting.");
+      return;
+    }
+    var report;
+    try {
+      report = ARAging.ageInvoices(invoices, asOf);
+    } catch (err) {
+      showError(err.message || String(err));
+      return;
+    }
+    var csv = ARAging.formatInvoicesCsv(report.invoices);
+    var blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = "open-invoices-priority.csv";
+    a.rel = "noopener";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  els.exportCsv.addEventListener("click", exportOpenInvoicesCsv);
+  if (els.exportCsvTable) {
+    els.exportCsvTable.addEventListener("click", exportOpenInvoicesCsv);
+  }
   els.file.addEventListener("change", function () {
     var file = els.file.files && els.file.files[0];
     if (!file) return;

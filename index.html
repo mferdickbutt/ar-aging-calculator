@@ -33,6 +33,7 @@
           <input id="csvFile" type="file" accept=".csv,text/csv" />
         </label>
         <button type="button" class="btn secondary" id="loadSample">Reload sample</button>
+        <button type="button" class="btn" id="exportCsv">Export CSV</button>
         <p class="status" id="status">Loading sample…</p>
       </div>
 
@@ -59,7 +60,10 @@
       </section>
 
       <section class="panel">
-        <h2>Open invoices</h2>
+        <div class="panel-head">
+          <h2>Open invoices</h2>
+          <button type="button" class="btn" id="exportCsvTable">Export CSV</button>
+        </div>
         <table>
           <thead>
             <tr>
@@ -81,6 +85,8 @@
         CSV columns: <code>id</code>, <code>customer</code>, <code>invoice_date</code>,
         <code>due_date</code>, <code>amount</code>, <code>paid</code> (aliases accepted).
         Outstanding = amount − paid. Fully paid rows are omitted. Sample data is fictional.
+        <strong>Export CSV</strong> downloads the open-invoice table sorted by priority score
+        (highest first).
       </p>
       <footer>
         Static demo · same aging math as <code>js/aging.js</code> and <code>./scripts/test.sh</code>

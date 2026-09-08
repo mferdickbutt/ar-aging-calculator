@@ -372,8 +372,69 @@
     return (neg ? "-$" : "$") + grouped + "." + frac;
   }
 
+  /**
+   * RFC4180-style CSV field: quote when the value contains comma, quote, or newline;
+   * internal quotes become "".
+   */
+  function escapeCsvField(value) {
+    var s = value == null ? "" : String(value);
+    if (/[",\r\n]/.test(s)) {
+      return '"' + s.replace(/"/g, '""') + '"';
+    }
+    return s;
+  }
+
+  /** Same labels and order as the Priority-enabled open-invoice table. */
+  var INVOICE_CSV_HEADERS = [
+    "Invoice",
+    "Customer",
+    "Invoice date",
+    "Due date",
+    "Days past due",
+    "Bucket",
+    "Outstanding",
+    "Priority",
+  ];
+
+  function invoiceCsvRow(inv) {
+    return [
+      inv.id,
+      inv.customer,
+      inv.invoice_date,
+      inv.due_date,
+      inv.days_past_due,
+      inv.bucket,
+      formatUsd(inv.outstanding),
+      inv.priority_score,
+    ]
+      .map(escapeCsvField)
+      .join(",");
+  }
+
+  function sortInvoicesByPriority(invoices) {
+    return (invoices || []).slice().sort(function (a, b) {
+      if (b.priority_score !== a.priority_score) return b.priority_score - a.priority_score;
+      return a.id < b.id ? -1 : a.id > b.id ? 1 : 0;
+    });
+  }
+
+  /**
+   * CSV of open invoices sorted by collection-priority score (highest first).
+   * Does not mutate the input list.
+   */
+  function formatInvoicesCsv(invoices) {
+    var rows = sortInvoicesByPriority(invoices);
+    var lines = [INVOICE_CSV_HEADERS.map(escapeCsvField).join(",")];
+    var i;
+    for (i = 0; i < rows.length; i++) {
+      lines.push(invoiceCsvRow(rows[i]));
+    }
+    return lines.join("\n") + "\n";
+  }
+
   return {
     BUCKETS: BUCKETS,
+    INVOICE_CSV_HEADERS: INVOICE_CSV_HEADERS,
     parseISODate: parseISODate,
     formatISODate: formatISODate,
     daysBetween: daysBetween,
@@ -386,5 +447,8 @@
     ageInvoices: ageInvoices,
     parseCsv: parseCsv,
     formatUsd: formatUsd,
+    escapeCsvField: escapeCsvField,
+    sortInvoicesByPriority: sortInvoicesByPriority,
+    formatInvoicesCsv: formatInvoicesCsv,
   };
 });
