@@ -282,6 +282,128 @@ test("ageInvoices: every open invoice has a matching priority_score", function (
   assert.ok(byId["INV-1010"].priority_score > byId["INV-1001"].priority_score);
 });
 
+test("escapeCsvField: leaves plain values unquoted", function () {
+  assert.strictEqual(ARAging.escapeCsvField("INV-1001"), "INV-1001");
+  assert.strictEqual(ARAging.escapeCsvField(460), "460");
+  assert.strictEqual(ARAging.escapeCsvField(""), "");
+});
+
+test("escapeCsvField: quotes commas, newlines, and doubles internal quotes", function () {
+  assert.strictEqual(ARAging.escapeCsvField("Wayne, Inc."), '"Wayne, Inc."');
+  assert.strictEqual(ARAging.escapeCsvField('Foo "Bar" Co'), '"Foo ""Bar"" Co"');
+  assert.strictEqual(ARAging.escapeCsvField('a,b"c'), '"a,b""c"');
+  assert.strictEqual(ARAging.escapeCsvField("$22,000.00"), '"$22,000.00"');
+  assert.strictEqual(ARAging.escapeCsvField("line1\nline2"), '"line1\nline2"');
+});
+
+test("formatInvoicesCsv: header matches the Priority-enabled invoice table", function () {
+  var csv = ARAging.formatInvoicesCsv([]);
+  var header = csv.split("\n")[0];
+  assert.strictEqual(
+    header,
+    "Invoice,Customer,Invoice date,Due date,Days past due,Bucket,Outstanding,Priority"
+  );
+  assert.deepStrictEqual(ARAging.INVOICE_CSV_HEADERS, [
+    "Invoice",
+    "Customer",
+    "Invoice date",
+    "Due date",
+    "Days past due",
+    "Bucket",
+    "Outstanding",
+    "Priority",
+  ]);
+});
+
+test("formatInvoicesCsv: sample open invoices are sorted by priority_score highest first", function () {
+  var report = ARAging.ageInvoices(sample, AS_OF);
+  var csv = ARAging.formatInvoicesCsv(report.invoices);
+  var lines = csv.trim().split("\n");
+  assert.strictEqual(lines.length, report.invoice_count + 1);
+  var ids = lines.slice(1).map(function (line) {
+    return line.split(",")[0];
+  });
+  var expected = report.invoices
+    .slice()
+    .sort(function (a, b) {
+      if (b.priority_score !== a.priority_score) return b.priority_score - a.priority_score;
+      return a.id < b.id ? -1 : a.id > b.id ? 1 : 0;
+    })
+    .map(function (r) {
+      return r.id;
+    });
+  assert.deepStrictEqual(ids, [
+    "INV-1010",
+    "INV-1009",
+    "INV-1008",
+    "INV-1006",
+    "INV-1003",
+    "INV-1005",
+    "INV-1007",
+    "INV-1011",
+    "INV-1012",
+    "INV-1004",
+    "INV-1001",
+    "INV-1014",
+    "INV-1002",
+  ]);
+  assert.deepStrictEqual(ids, expected);
+  assert.strictEqual(report.invoices[3].id, "INV-1007");
+  var scores = expected.map(function (id) {
+    return report.invoices.filter(function (r) {
+      return r.id === id;
+    })[0].priority_score;
+  });
+  var i;
+  for (i = 1; i < scores.length; i++) {
+    assert.ok(scores[i - 1] >= scores[i]);
+  }
+});
+
+test("formatInvoicesCsv: does not mutate the input invoice order", function () {
+  var report = ARAging.ageInvoices(sample, AS_OF);
+  var before = report.invoices.map(function (r) {
+    return r.id;
+  });
+  ARAging.formatInvoicesCsv(report.invoices);
+  var after = report.invoices.map(function (r) {
+    return r.id;
+  });
+  assert.deepStrictEqual(after, before);
+});
+
+test("formatInvoicesCsv: RFC4180-escapes quotes and commas in fields", function () {
+  var rows = [
+    {
+      id: "INV-LOW",
+      customer: "Acme Corp",
+      invoice_date: "2026-08-01",
+      due_date: "2026-08-15",
+      days_past_due: 23,
+      bucket: "1-30",
+      outstanding: 500,
+      priority_score: 28,
+    },
+    {
+      id: "INV-HIGH",
+      customer: 'Wayne, "Inc."',
+      invoice_date: "2026-01-01",
+      due_date: "2026-03-01",
+      days_past_due: 190,
+      bucket: "90+",
+      outstanding: 22000,
+      priority_score: 460,
+    },
+  ];
+  var csv = ARAging.formatInvoicesCsv(rows);
+  var lines = csv.trim().split("\n");
+  assert.strictEqual(lines[1].slice(0, 8), "INV-HIGH");
+  assert.ok(lines[1].indexOf('"Wayne, ""Inc."""') !== -1);
+  assert.ok(lines[1].indexOf('"$22,000.00"') !== -1);
+  assert.ok(lines[1].indexOf(",90+,") !== -1);
+  assert.ok(lines[1].lastIndexOf(",460") === lines[1].length - 4);
+});
+
 console.log("");
 if (failed) {
   console.log(RED + BOLD + failed + " failed, " + passed + " passed" + RESET);

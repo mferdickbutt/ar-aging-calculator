@@ -167,6 +167,18 @@ input[type="date"] {
   font-weight: 600;
 }
 
+.panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 12px 18px 8px;
+}
+
+.panel-head h2 {
+  margin: 0;
+}
+
 table {
   width: 100%;
   border-collapse: collapse;
