@@ -15,6 +15,7 @@
           (as-of minus due date). If due date is blank, invoice date is used.
           <strong>Current</strong> is not yet due or due today (0 days).
           <strong>90+</strong> is 91 or more days past due so it does not overlap 61–90.
+          Each open invoice also gets a <strong>priority score</strong> (higher = more urgent).
         </p>
       </header>
 
@@ -69,6 +70,7 @@
               <th>Days past due</th>
               <th class="left">Bucket</th>
               <th>Outstanding</th>
+              <th class="priority">Priority</th>
             </tr>
           </thead>
           <tbody id="invoiceBody"></tbody>

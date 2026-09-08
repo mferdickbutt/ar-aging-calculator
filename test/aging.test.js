@@ -225,6 +225,63 @@ test("ageInvoices: rejects bad as-of date", function () {
   }, /asOfDate/);
 });
 
+test("collectionPriorityScore: not-yet-due uses 0 days and no 90+ bonus", function () {
+  assert.strictEqual(ARAging.collectionPriorityScore(-8, 500000, "current"), 50);
+});
+
+test("collectionPriorityScore: due today (0 days) is not overdue", function () {
+  assert.strictEqual(ARAging.collectionPriorityScore(0, 325000, "current"), 33);
+});
+
+test("collectionPriorityScore: weights days past due plus $100 outstanding units", function () {
+  assert.strictEqual(ARAging.collectionPriorityScore(18, 840000, "1-30"), 102);
+  assert.strictEqual(ARAging.collectionPriorityScore(30, 210000, "1-30"), 51);
+});
+
+test("collectionPriorityScore: 90+ bucket adds a 50-point bonus", function () {
+  assert.strictEqual(ARAging.collectionPriorityScore(91, 1500000, "90+"), 291);
+  assert.strictEqual(ARAging.collectionPriorityScore(190, 2200000, "90+"), 460);
+  assert.strictEqual(ARAging.collectionPriorityScore(91, 1500000, "61-90"), 241);
+});
+
+test("collectionPriorityScore: deterministic integer for the same inputs", function () {
+  var a = ARAging.collectionPriorityScore(61, 120000, "61-90");
+  var b = ARAging.collectionPriorityScore(61, 120000, "61-90");
+  assert.strictEqual(a, 73);
+  assert.strictEqual(a, b);
+  assert.strictEqual(a, Math.floor(a));
+});
+
+test("ageInvoice: includes priority_score from the shared formula", function () {
+  var row = ARAging.ageInvoice(
+    { id: "P", customer: "Acme Corp", invoice_date: "2026-02-01", due_date: "2026-03-01", amount: 25000, paid: 3000 },
+    AS_OF
+  );
+  assert.strictEqual(row.priority_score, 460);
+  assert.strictEqual(
+    row.priority_score,
+    ARAging.collectionPriorityScore(row.days_past_due, row.outstanding_cents, row.bucket)
+  );
+});
+
+test("ageInvoices: every open invoice has a matching priority_score", function () {
+  var report = ARAging.ageInvoices(sample, AS_OF);
+  assert.ok(report.invoices.length > 0);
+  report.invoices.forEach(function (r) {
+    assert.strictEqual(
+      r.priority_score,
+      ARAging.collectionPriorityScore(r.days_past_due, r.outstanding_cents, r.bucket)
+    );
+  });
+  var byId = {};
+  report.invoices.forEach(function (r) {
+    byId[r.id] = r;
+  });
+  assert.strictEqual(byId["INV-1001"].priority_score, 50);
+  assert.strictEqual(byId["INV-1010"].priority_score, 460);
+  assert.ok(byId["INV-1010"].priority_score > byId["INV-1001"].priority_score);
+});
+
 console.log("");
 if (failed) {
   console.log(RED + BOLD + failed + " failed, " + passed + " passed" + RESET);
